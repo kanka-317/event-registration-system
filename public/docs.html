@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration API - Interactive Docs & Explorer</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎟️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(18, 24, 38, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    header {
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      padding: 0.4rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .session-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid transparent;
+      font-family: var(--font-sans);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border-color: var(--card-border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .token-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      color: var(--accent);
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar Navigation */
+    .nav-panel {
+      position: sticky;
+      top: 6rem;
+      height: fit-content;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: all 0.15s;
+    }
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
+    /* Endpoint Card */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .endpoint-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s;
+    }
+    .endpoint-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-header {
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .endpoint-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .method-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .method-GET { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .method-POST { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .method-PUT { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .method-PATCH { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .method-DELETE { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .route-path {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .auth-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+    }
+    .auth-badge.required {
+      color: #fcd34d;
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .endpoint-desc {
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 768px) {
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .code-input, .text-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 0.6rem 0.75rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .code-input:focus, .text-input:focus {
+      border-color: var(--primary);
+    }
+
+    .code-input {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .response-box {
+      background: #06090e;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #a5f3fc;
+      max-height: 250px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      display: none;
+    }
+
+    .response-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      margin-bottom: 0.5rem;
+    }
+
+    .pill {
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">🎟️</div>
+        <div>
+          <h1>Event Registration API</h1>
+          <p>Interactive Documentation & Testing Console</p>
+        </div>
+      </div>
+
+      <div class="session-bar">
+        <button class="btn btn-secondary" onclick="quickLogin('organizer')">⚡ Login as Organizer</button>
+        <button class="btn btn-secondary" onclick="quickLogin('user')">⚡ Login as Attendee</button>
+        <div id="activeAuth" class="token-badge">Token: Guest (None)</div>
+        <button class="btn btn-secondary" onclick="clearToken()">Clear</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <aside class="nav-panel">
+      <div class="nav-section-title">Quick Actions</div>
+      <ul class="nav-list">
+        <li><a class="nav-link" href="#ep-health"><span class="method-tag method-GET">GET</span> Health Check</a></li>
+      </ul>
+
+      <div class="nav-section-title">Authentication</div>
+      <ul class="nav-list">
+        <li><a class="nav-link" href="#ep-register"><span class="method-tag method-POST">POST</span> Register</a></li>
+        <li><a class="nav-link" href="#ep-login"><span class="method-tag method-POST">POST</span> Login</a></li>
+        <li><a class="nav-link" href="#ep-me"><span class="method-tag method-GET">GET</span> Profile / Me</a></li>
+      </ul>
+
+      <div class="nav-section-title">Events</div>
+      <ul class="nav-list">
+        <li><a class="nav-link" href="#ep-list-events"><span class="method-tag method-GET">GET</span> List Events</a></li>
+        <li><a class="nav-link" href="#ep-get-event"><span class="method-tag method-GET">GET</span> Event Details</a></li>
+        <li><a class="nav-link" href="#ep-create-event"><span class="method-tag method-POST">POST</span> Create Event</a></li>
+        <li><a class="nav-link" href="#ep-update-event"><span class="method-tag method-PUT">PUT</span> Update Event</a></li>
+        <li><a class="nav-link" href="#ep-delete-event"><span class="method-tag method-DELETE">DEL</span> Delete Event</a></li>
+      </ul>
+
+      <div class="nav-section-title">Registrations</div>
+      <ul class="nav-list">
+        <li><a class="nav-link" href="#ep-register-event"><span class="method-tag method-POST">POST</span> Register for Event</a></li>
+        <li><a class="nav-link" href="#ep-my-regs"><span class="method-tag method-GET">GET</span> My Registrations</a></li>
+        <li><a class="nav-link" href="#ep-cancel-reg"><span class="method-tag method-PATCH">PAT</span> Cancel Registration</a></li>
+        <li><a class="nav-link" href="#ep-roster"><span class="method-tag method-GET">GET</span> Attendee Roster</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Interactive Endpoints -->
+    <main class="main-content">
+
+      <!-- 1. Health Check -->
+      <section id="ep-health" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-GET">GET</span>
+            <span class="route-path">/api/health</span>
+            <span class="auth-badge">Public</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeApi('GET', '/api/health', null, false, 'resp-health')">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Check system health, database connection, and uptime.</p>
+          <div id="resp-health" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 2. Auth: Register -->
+      <section id="ep-register" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-POST">POST</span>
+            <span class="route-path">/api/auth/register</span>
+            <span class="auth-badge">Public</span>
+          </div>
+          <button class="btn btn-primary" onclick="sendWithBody('POST', '/api/auth/register', 'body-register', false, 'resp-register')">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Register a new attendee or organizer account.</p>
+          <div class="form-group">
+            <label class="form-label">Request Body (JSON)</label>
+            <textarea id="body-register" class="code-input">{
+  "name": "Jordan Smith",
+  "email": "jordan.smith@example.com",
+  "password": "password123",
+  "role": "user"
+}</textarea>
+          </div>
+          <div id="resp-register" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 3. Auth: Login -->
+      <section id="ep-login" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-POST">POST</span>
+            <span class="route-path">/api/auth/login</span>
+            <span class="auth-badge">Public</span>
+          </div>
+          <button class="btn btn-primary" onclick="handleLoginRequest('body-login', 'resp-login')">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Authenticate and receive a JWT Bearer token.</p>
+          <div class="form-group">
+            <label class="form-label">Request Body (JSON)</label>
+            <textarea id="body-login" class="code-input">{
+  "email": "organizer@eventhub.com",
+  "password": "organizer123"
+}</textarea>
+          </div>
+          <div id="resp-login" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 4. Auth: Profile -->
+      <section id="ep-me" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-GET">GET</span>
+            <span class="route-path">/api/auth/me</span>
+            <span class="auth-badge required">Bearer Token Required</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeApi('GET', '/api/auth/me', null, true, 'resp-me')">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Fetch details of the currently authenticated user.</p>
+          <div id="resp-me" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 5. Events: List Events -->
+      <section id="ep-list-events" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-GET">GET</span>
+            <span class="route-path">/api/events</span>
+            <span class="auth-badge">Public</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeEventList()">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">List events with search filter, pagination, and real-time remaining seat counts.</p>
+          <div class="input-grid">
+            <div class="form-group">
+              <label class="form-label">Search Query (?search=)</label>
+              <input type="text" id="filter-search" class="text-input" placeholder="e.g. Cloud, AI, Hackathon">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Page & Limit</label>
+              <input type="text" id="filter-pagination" class="text-input" value="page=1&limit=10">
+            </div>
+          </div>
+          <div id="resp-list-events" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 6. Events: Get Single Event -->
+      <section id="ep-get-event" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-GET">GET</span>
+            <span class="route-path">/api/events/:id</span>
+            <span class="auth-badge">Public</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeGetSingleEvent()">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Get single event details along with remainingSeats and registeredCount.</p>
+          <div class="form-group">
+            <label class="form-label">Event ID (:id)</label>
+            <input type="text" id="param-event-id" class="text-input" placeholder="Paste event ObjectId here">
+          </div>
+          <div id="resp-get-event" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 7. Events: Create Event -->
+      <section id="ep-create-event" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-POST">POST</span>
+            <span class="route-path">/api/events</span>
+            <span class="auth-badge required">Organizer Token Required</span>
+          </div>
+          <button class="btn btn-primary" onclick="sendWithBody('POST', '/api/events', 'body-create-event', true, 'resp-create-event')">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Create a new event. Only users with role: "organizer" are authorized.</p>
+          <div class="form-group">
+            <label class="form-label">Request Body (JSON)</label>
+            <textarea id="body-create-event" class="code-input">{
+  "title": "Quantum Computing & Web3 Symposium",
+  "description": "Exploration of quantum algorithms, cryptography post-RSA, and decentralized systems.",
+  "date": "2026-12-15",
+  "time": "10:30 AM",
+  "location": "Moscone Center South, San Francisco, CA",
+  "capacity": 80
+}</textarea>
+          </div>
+          <div id="resp-create-event" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 8. Registrations: Register for Event -->
+      <section id="ep-register-event" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-POST">POST</span>
+            <span class="route-path">/api/events/:id/register</span>
+            <span class="auth-badge required">Bearer Token Required</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeRegisterForEvent()">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Register current logged-in user for an event. Prevents duplicate registrations and blocks if full.</p>
+          <div class="form-group">
+            <label class="form-label">Target Event ID (:id)</label>
+            <input type="text" id="param-reg-event-id" class="text-input" placeholder="Paste event ObjectId here">
+          </div>
+          <div id="resp-register-event" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 9. Registrations: View My Registrations -->
+      <section id="ep-my-regs" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-GET">GET</span>
+            <span class="route-path">/api/registrations/my</span>
+            <span class="auth-badge required">Bearer Token Required</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeApi('GET', '/api/registrations/my', null, true, 'resp-my-regs')">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">View all registrations belonging to the authenticated user with populated event details.</p>
+          <div id="resp-my-regs" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 10. Registrations: Cancel Registration -->
+      <section id="ep-cancel-reg" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-PATCH">PATCH</span>
+            <span class="route-path">/api/registrations/:id/cancel</span>
+            <span class="auth-badge required">Bearer Token Required</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeCancelReg()">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">Cancel user's own registration. Frees up a seat immediately.</p>
+          <div class="form-group">
+            <label class="form-label">Registration ID (:id)</label>
+            <input type="text" id="param-cancel-reg-id" class="text-input" placeholder="Paste registration ObjectId here">
+          </div>
+          <div id="resp-cancel-reg" class="response-box"></div>
+        </div>
+      </section>
+
+      <!-- 11. Registrations: Attendee Roster -->
+      <section id="ep-roster" class="endpoint-card">
+        <div class="card-header">
+          <div class="endpoint-info">
+            <span class="method-tag method-GET">GET</span>
+            <span class="route-path">/api/events/:id/registrations</span>
+            <span class="auth-badge required">Organizer Token Required</span>
+          </div>
+          <button class="btn btn-primary" onclick="executeGetRoster()">Send Request</button>
+        </div>
+        <div class="card-body">
+          <p class="endpoint-desc">View the list of registered attendees for an event created by the organizer.</p>
+          <div class="form-group">
+            <label class="form-label">Event ID (:id)</label>
+            <input type="text" id="param-roster-event-id" class="text-input" placeholder="Paste event ObjectId here">
+          </div>
+          <div id="resp-roster" class="response-box"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    let authToken = localStorage.getItem('api_token') || '';
+    let currentRole = localStorage.getItem('api_role') || '';
+
+    function updateAuthBadge() {
+      const badge = document.getElementById('activeAuth');
+      if (authToken) {
+        badge.textContent = `Token: ${currentRole.toUpperCase()} (Active)`;
+        badge.style.color = currentRole === 'organizer' ? '#34d399' : '#60a5fa';
+        badge.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+      } else {
+        badge.textContent = 'Token: Guest (None)';
+        badge.style.color = '#94a3b8';
+        badge.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+      }
+    }
+    updateAuthBadge();
+
+    function clearToken() {
+      authToken = '';
+      currentRole = '';
+      localStorage.removeItem('api_token');
+      localStorage.removeItem('api_role');
+      updateAuthBadge();
+    }
+
+    async function quickLogin(role) {
+      const email = role === 'organizer' ? 'organizer@eventhub.com' : 'alex.mercer@example.com';
+      const password = role === 'organizer' ? 'organizer123' : 'user123';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.success && data.data && data.data.token) {
+          authToken = data.data.token;
+          currentRole = role;
+          localStorage.setItem('api_token', authToken);
+          localStorage.setItem('api_role', currentRole);
+          updateAuthBadge();
+          alert(`Successfully authenticated as ${role.toUpperCase()}!\nToken stored for requests.`);
+        } else {
+          alert('Login failed: ' + (data.message || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Network error connecting to /api/auth/login: ' + err.message);
+      }
+    }
+
+    async function handleLoginRequest(bodyId, respId) {
+      const rawBody = document.getElementById(bodyId).value;
+      try {
+        const bodyObj = JSON.parse(rawBody);
+        const startTime = performance.now();
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: rawBody
+        });
+        const duration = Math.round(performance.now() - startTime);
+        const data = await res.json();
+        if (data.success && data.data && data.data.token) {
+          authToken = data.data.token;
+          currentRole = data.data.user.role;
+          localStorage.setItem('api_token', authToken);
+          localStorage.setItem('api_role', currentRole);
+          updateAuthBadge();
+        }
+        displayResponse(respId, res.status, duration, data);
+      } catch (e) {
+        displayResponse(respId, 400, 0, { success: false, message: 'Invalid JSON body: ' + e.message });
+      }
+    }
+
+    async function executeApi(method, url, body = null, needAuth = false, respId) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (needAuth && authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+
+      const options = { method, headers };
+      if (body) options.body = typeof body === 'string' ? body : JSON.stringify(body);
+
+      const startTime = performance.now();
+      try {
+        const res = await fetch(url, options);
+        const duration = Math.round(performance.now() - startTime);
+        const data = await res.json();
+        displayResponse(respId, res.status, duration, data);
+
+        // Auto pre-populate event ID if list events was called
+        if (url.startsWith('/api/events') && method === 'GET' && data.data?.events?.length) {
+          const sampleId = data.data.events[0]._id;
+          ['param-event-id', 'param-reg-event-id', 'param-roster-event-id'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && !el.value) el.value = sampleId;
+          });
+        }
+      } catch (err) {
+        displayResponse(respId, 500, 0, { success: false, message: 'Request failed: ' + err.message });
+      }
+    }
+
+    function sendWithBody(method, url, bodyId, needAuth, respId) {
+      const text = document.getElementById(bodyId).value;
+      try {
+        JSON.parse(text); // validate JSON
+        executeApi(method, url, text, needAuth, respId);
+      } catch (e) {
+        displayResponse(respId, 400, 0, { success: false, message: 'Invalid JSON: ' + e.message });
+      }
+    }
+
+    function executeEventList() {
+      const search = document.getElementById('filter-search').value.trim();
+      const pagination = document.getElementById('filter-pagination').value.trim();
+      let query = [];
+      if (search) query.push(`search=${encodeURIComponent(search)}`);
+      if (pagination) query.push(pagination);
+      const url = '/api/events' + (query.length ? '?' + query.join('&') : '');
+      executeApi('GET', url, null, false, 'resp-list-events');
+    }
+
+    function executeGetSingleEvent() {
+      const id = document.getElementById('param-event-id').value.trim();
+      if (!id) return alert('Please enter an Event ID');
+      executeApi('GET', `/api/events/${id}`, null, false, 'resp-get-event');
+    }
+
+    function executeRegisterForEvent() {
+      const id = document.getElementById('param-reg-event-id').value.trim();
+      if (!id) return alert('Please enter an Event ID');
+      executeApi('POST', `/api/events/${id}/register`, null, true, 'resp-register-event');
+    }
+
+    function executeCancelReg() {
+      const id = document.getElementById('param-cancel-reg-id').value.trim();
+      if (!id) return alert('Please enter a Registration ID');
+      executeApi('PATCH', `/api/registrations/${id}/cancel`, null, true, 'resp-cancel-reg');
+    }
+
+    function executeGetRoster() {
+      const id = document.getElementById('param-roster-event-id').value.trim();
+      if (!id) return alert('Please enter an Event ID');
+      executeApi('GET', `/api/events/${id}/registrations`, null, true, 'resp-roster');
+    }
+
+    function displayResponse(elemId, status, duration, data) {
+      const container = document.getElementById(elemId);
+      if (!container) return;
+      container.style.display = 'block';
+
+      const isSuccess = status >= 200 && status < 300;
+      const statusColor = isSuccess ? '#34d399' : '#f87171';
+      const statusBg = isSuccess ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+
+      container.innerHTML = `
+        <div class="response-status">
+          <span class="pill" style="color: ${statusColor}; background: ${statusBg};">${status}</span>
+          <span style="color: #94a3b8;">${duration} ms</span>
+        </div>
+        <div>${JSON.stringify(data, null, 2)}</div>
+      `;
+    }
+
+    // Auto-fetch health and events on initial load to populate sample IDs
+    window.addEventListener('DOMContentLoaded', () => {
+      executeApi('GET', '/api/events?page=1&limit=5', null, false, 'resp-list-events');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+/**
+ * Standard API Response Formatter
+ * Consistently returns { success, message, data }
+ */
+const successResponse = (res, statusCode = 200, message = 'Success', data = null) => {
+  const response = {
+    success: true,
+    message
+  };
+
+  if (data !== null && data !== undefined) {
+    response.data = data;
+  }
+
+  return res.status(statusCode).json(response);
+};
+
+const errorResponse = (res, statusCode = 500, message = 'Server Error', errors = null) => {
+  const response = {
+    success: false,
+    message
+  };
+
+  if (errors !== null && errors !== undefined) {
+    response.errors = errors;
+  }
+
+  return res.status(statusCode).json(response);
+};
+
+module.exports = {
+  successResponse,
+  errorResponse
+};
